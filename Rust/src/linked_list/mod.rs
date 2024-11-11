@@ -100,8 +100,75 @@ pub mod linked_list {
         }
 
         pub fn push_front(&mut self, x: T) {
-            let node = Box::new(Node::new(None, x, self.front.clone()));
-            self.front = Some(node)
+            match &(self.front) {
+                None => {
+                    let new_front_back = Node::new(None, x, None);
+                    self.front = Some(Box::new(new_front_back.clone()));
+                    self.back = Some(Box::new(new_front_back.clone()));
+                },
+                Some(_) => {
+                    let new_front = Some(Box::new(Node::new(None, x, self.front.clone())));
+                    self.front = new_front;
+                    }
+                };
+        }
+
+        pub fn pop_front(&mut self) -> Option<T> {
+            match &(self.front) {
+                None => None,
+                Some(el) => {
+                    let elem = el.elem.clone();
+                    let new_front = match &(el.succ) {
+                        None => None,
+                        Some(node) => Some(Box::new(Node::new(None, node.elem.clone(), node.succ.clone())))
+                    };
+                    self.front = new_front;
+                    Some(elem)
+                }
+            }
+        }
+
+        pub fn push_back(&mut self, x: T) {
+            match &(self.front) {
+                None => {
+                    let new_front_back = Node::new(None, x, None);
+                    self.front = Some(Box::new(new_front_back.clone()));
+                    self.back = Some(Box::new(new_front_back.clone()));
+                },
+                Some(_) => {
+                    let new_back = Some(Box::new(Node::new(self.back.clone(), x, None)));
+                    self.back = new_back;
+                    }
+                };
+        } 
+
+        pub fn pop_back(&mut self) -> Option<T> {
+            match &(self.back) {
+                None => None,
+                Some(el) => {
+                    let elem = el.elem.clone();
+                    let new_back = match &(el.prev) {
+                        None => None,
+                        Some(node) => Some(Box::new(Node::new(node.prev.clone(), node.elem.clone(), None)))
+                    };
+                    self.back = new_back;
+                    Some(elem)
+                }
+            }
+        }
+
+        pub fn split_off(&mut self, at: i32) -> LinkedList<T> {
+            if at > self.len {
+                panic!("List too short!")
+            } else {
+                let mut new_list = LinkedList::new();
+                let mut _at = at.clone();
+                while _at > 0 {
+                    new_list.push_front(self.pop_back().unwrap());
+                    _at = _at - 1;
+                }
+                new_list
+            }
         }
 
     }
