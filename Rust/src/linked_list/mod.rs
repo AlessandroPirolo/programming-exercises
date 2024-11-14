@@ -1,5 +1,6 @@
 pub mod linked_list {
 
+
     struct Node<T>
     where
         T: std::clone::Clone
@@ -16,6 +17,31 @@ pub mod linked_list {
         front : Option<Box<Node<T>>>,
         back : Option<Box<Node<T>>>,
         len : i32
+    }
+
+    pub struct Cursor<T> 
+    where 
+        T: std::clone::Clone
+    {
+        idx: usize,
+        prev: Option<Box<Node<T>>>,
+        succ: Option<Box<Node<T>>> 
+    }
+
+    impl<'a, T> Cursor<T> 
+    where 
+        T: std::clone::Clone
+    {
+        pub fn index(&self) -> usize {
+            self.idx
+        }
+
+        pub fn move_next(&mut self) {
+            self.idx += 1;
+            self.ptr = self.ptr.unwrap().succ;
+        }
+
+
     }
 
     impl<T> Node<T> 
@@ -86,25 +112,28 @@ pub mod linked_list {
         }
 
         pub fn front(&self) -> Option<&T> {
-            match &(self.front) {
-                None => None, 
-                Some(node) => Some(&(node.elem))
-            }
+            self.front.as_ref().map(|node| &node.as_ref().elem)
+        }
+
+        pub fn front_mut(&mut self) -> Option<&mut T> {
+            self.front.as_mut().map(|node| &mut node.as_mut().elem) 
         }
 
         pub fn back(&self) -> Option<&T> {
-            match &(self.back) {
-                None => None, 
-                Some(node) => Some(&(node.elem))
-            }
+            self.back.as_ref().map(|node| &node.as_ref().elem)
+        }
+        
+        pub fn back_mut(&mut self) -> Option<&mut T> {
+            self.back.as_mut().map(|node| &mut node.as_mut().elem) 
         }
 
         pub fn push_front(&mut self, x: T) {
+            self.len += 1;
             match &(self.front) {
                 None => {
                     let new_front_back = Node::new(None, x, None);
-                    self.front = Some(Box::new(new_front_back.clone()));
-                    self.back = Some(Box::new(new_front_back.clone()));
+                    self.front = Some(Box::new(new_front_back));
+                    self.back = Some(Box::new(new_front_back));
                 },
                 Some(_) => {
                     let new_front = Some(Box::new(Node::new(None, x, self.front.clone())));
@@ -114,6 +143,7 @@ pub mod linked_list {
         }
 
         pub fn pop_front(&mut self) -> Option<T> {
+            self.len -= 1;
             match &(self.front) {
                 None => None,
                 Some(el) => {
@@ -129,6 +159,7 @@ pub mod linked_list {
         }
 
         pub fn push_back(&mut self, x: T) {
+            self.len += 1;
             match &(self.front) {
                 None => {
                     let new_front_back = Node::new(None, x, None);
@@ -143,6 +174,7 @@ pub mod linked_list {
         } 
 
         pub fn pop_back(&mut self) -> Option<T> {
+            self.len -= 1;
             match &(self.back) {
                 None => None,
                 Some(el) => {
@@ -169,6 +201,10 @@ pub mod linked_list {
                 }
                 new_list
             }
+        }
+
+        pub fn remove(&mut self, _at: i32) -> T {
+            self.front.unwrap().elem.clone()
         }
 
     }
