@@ -15,16 +15,26 @@ unsigned setbits(unsigned x, int p, int n, unsigned y)
 unsigned invert(unsigned x, int p, int n) 
 {
   unsigned mask_y = ~(~0 << n) << (p + 1 - n);
-  unsigned mask_x = ~mask_y;
   unsigned y = ~x;
-  x = x & mask_x;
-  y = y & mask_y;
-  return x | y;
+  return (x & ~mask_y) | (y & mask_y);
 }
 
-unsigned rightrot(int x, int n) 
+/*
+  * Rotate the integer x to the right by n positions
+  * Eg: 3 = 000101 -> 100010 = 66
+  *
+*/
+int rightrot(int x, int n) 
 {
-  return x >> n;
+  while (n > 0) {
+    if (x & 1) 
+      x = (x >> 1) | ~(~0 >> 1);
+    else
+     x >>= 1;
+
+    --n;
+  }
+  return x;
 }
 
 int main() 
@@ -36,6 +46,8 @@ int main()
   y = 4;
   printf("%d", getbits(x, p, n));
   printf("%d", setbits(x, p, n, y));
+  printf("%d", invert(x, p, n));
+  printf("%d", rightrot(x, n));
 }
 
 
