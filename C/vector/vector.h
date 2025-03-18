@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 typedef struct Vector vector;
 
 /* Create */
@@ -18,12 +20,10 @@ int back(vector *v);
 int* data(vector *v);
 
 /* Modifiers */
-void assign(vector* v);
+void assign(vector* v, int size, int val);
 void push_back(vector* v, int val);
 void pop_back(vector* v);
 void insert(vector* v, int pos, int size, int val);
 void erase(vector *v, int pos);
-void swap(vector* v, int pos1, int pos2);
+void swap(vector* v1, vector* v2);
 void clear(vector *v);
-void emplace();
-void emplace_back();

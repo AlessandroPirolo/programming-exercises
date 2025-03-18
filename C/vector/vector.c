@@ -91,6 +91,17 @@ int* data(vector *v) {
 }
 
 /* Modifiers */
+void assign(vector* v, int size, int val) {
+  reserve(v, size * 2);
+  for (int i = 0; i < size; i++) {
+    v->v[i] = &val;
+  }
+  for (int i = size; i < v->size; i++) {
+    v->v[i] = NULL;
+  }
+  v->size = size;
+}
+
 void push_back(vector* v, int val) {
   if (v->size+1 > v->capacity) {
     reserve(v, v->capacity * 2);
@@ -130,9 +141,30 @@ void erase(vector *v, int pos) {
     v->v[i] = v->v[i+1];
     v->v[i+1] = NULL;
   }
+
   v->size--;
 }
 
-void swap(vector* v, int pos1, int pos2);
-void clear(vector *v);
-void emplace();
+void swap(vector* v1, vector* v2) {
+  int v1_size = v1->size;
+  int v2_size = v2->size;
+  int max_size = v1_size > v2_size ? v1_size : v2_size;
+
+  v1->capacity > v2->capacity ? reserve(v2, v1->capacity) : reserve(v1, v2->capacity);
+
+  for (int i = 0; i < max_size; i++) {
+    int* tmp = v1->v[i];
+    v1->v[i] = v2->v[i];
+    v2->v[i] = tmp;
+  }
+
+  v1->size = v2_size;
+  v2->size = v1_size;
+}
+
+void clear(vector *v) {
+  for (int i = 0; i < v->size; i++) {
+    v->v[i] = NULL;
+  }
+  v->size = 0;
+}
